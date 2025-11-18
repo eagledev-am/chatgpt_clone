@@ -1,5 +1,4 @@
-
-import { GoogleGenAI, Chat } from "@google/genai";
+import { GoogleGenAI, Chat, FunctionDeclaration, Type } from "@google/genai";
 
 const API_KEY = process.env.API_KEY;
 if (!API_KEY) {
@@ -10,11 +9,34 @@ if (!API_KEY) {
 
 const ai = new GoogleGenAI({ apiKey: API_KEY! });
 
-export const createChatSession = (): Chat => {
+const setReminderFunctionDeclaration: FunctionDeclaration = {
+    name: 'setReminder',
+    parameters: {
+      type: Type.OBJECT,
+      description: 'Sets a reminder for the user. The function requires a task description and a specific date and time.',
+      properties: {
+        task: {
+          type: Type.STRING,
+          description: 'A detailed description of the task for the reminder.',
+        },
+        datetime: {
+          type: Type.STRING,
+          description: 'The exact date and time for the reminder in ISO 8601 format (e.g., YYYY-MM-DDTHH:mm:ss).',
+        },
+      },
+      required: ['task', 'datetime'],
+    },
+  };
+
+export const reminderTools = [{ functionDeclarations: [setReminderFunctionDeclaration] }];
+
+
+export const createChatSession = (systemInstruction: string, tools?: any[]): Chat => {
   return ai.chats.create({
     model: 'gemini-2.5-flash',
     config: {
-        systemInstruction: 'You are Abdo AI, a helpful and creative assistant. Keep your responses concise and friendly.'
+        systemInstruction,
+        tools,
     }
   });
 };

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import type { Mode } from '../types';
 import { SparkleIcon } from './icons';
@@ -29,6 +28,9 @@ const Header: React.FC<HeaderProps> = ({ mode, setMode }) => {
         </button>
         <button onClick={() => setMode('image')} className={getButtonClasses('image')}>
           Image
+        </button>
+        <button onClick={() => setMode('code')} className={getButtonClasses('code')}>
+          Code
         </button>
       </div>
     </header>
